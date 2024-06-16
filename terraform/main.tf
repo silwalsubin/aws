@@ -99,9 +99,9 @@ resource "aws_route_table" "my_route_table" {
 
 # Step 5: Associate the Route Table with the Subnet if Necessary
 resource "aws_route_table_association" "my_route_table_association" {
-  count          = length(data.aws_route_table.existing_route_table.ids) == 0 ? 1 : 0
-  subnet_id      = length(data.aws_subnet.existing_subnet.ids) > 0 ? data.aws_subnet.existing_subnet.id : aws_subnet.my_subnet[0].id
-  route_table_id = length(data.aws_route_table.existing_route_table.ids) > 0 ? data.aws_route_table.existing_route_table.id : aws_route_table.my_route_table[0].id
+  count          = length(data.aws_route_table.existing_route_table.id) == 0 ? 1 : 0
+  subnet_id      = length(data.aws_subnet.existing_subnet.id) > 0 ? data.aws_subnet.existing_subnet.id : aws_subnet.my_subnet[0].id
+  route_table_id = length(data.aws_route_table.existing_route_table.id) > 0 ? data.aws_route_table.existing_route_table.id : aws_route_table.my_route_table[0].id
 }
 
 # Step 6: Check for Existing Security Group and Create if it Doesn't Exist
