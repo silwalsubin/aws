@@ -80,7 +80,7 @@ data "aws_route_table" "existing_route_table" {
 }
 
 resource "aws_route_table" "my_route_table" {
-  count  = length(data.aws_route_table.existing_route_table.ids) == 0 ? 1 : 0
+  count  = length(data.aws_route_table.existing_route_table.id) == 0 ? 1 : 0
   vpc_id = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id : aws_vpc.my_vpc[0].id
 
   route {
