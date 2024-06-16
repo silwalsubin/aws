@@ -36,8 +36,8 @@ data "aws_subnet" "existing_subnet" {
 }
 
 resource "aws_subnet" "my_subnet" {
-  count                  = length(data.aws_subnet.existing_subnet.ids) == 0 ? 1 : 0
-  vpc_id                 = length(data.aws_vpc.existing_vpc.ids) > 0 ? data.aws_vpc.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  count                  = length(data.aws_subnet.existing_subnet.id) == 0 ? 1 : 0
+  vpc_id                 = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id[0] : aws_vpc.my_vpc[0].id
   cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
@@ -59,8 +59,8 @@ data "aws_internet_gateway" "existing_igw" {
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = length(data.aws_internet_gateway.existing_igw.ids) == 0 ? 1 : 0
-  vpc_id = length(data.aws_vpc.existing_vpc.ids) > 0 ? data.aws_vpc.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  count  = length(data.aws_internet_gateway.existing_igw.id) == 0 ? 1 : 0
+  vpc_id = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id[0] : aws_vpc.my_vpc[0].id
 
   tags = {
     Name = "MyInternetGateway"
@@ -113,10 +113,10 @@ data "aws_security_group" "existing_sg" {
 }
 
 resource "aws_security_group" "my_security_group" {
-  count  = length(data.aws_security_group.existing_sg.ids) == 0 ? 1 : 0
+  count  = length(data.aws_security_group.existing_sg.id) == 0 ? 1 : 0
   name        = "allow_rdp"
   description = "Allow RDP traffic"
-  vpc_id      = length(data.aws_vpc.existing_vpc.ids) > 0 ? data.aws_vpc.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  vpc_id      = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id[0] : aws_vpc.my_vpc[0].id
 
   ingress {
     from_port   = 3389
