@@ -11,7 +11,7 @@ data "aws_vpcs" "all_vpcs" {
 }
 
 resource "aws_vpc" "my_vpc" {
-  count                = length(data.aws_vpcs.all_vpcs.ids) == 0 ? 1 : 0
+  count                = length(data.aws_vpcs.all_vpcs) == 0 ? 1 : 0
   cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
@@ -34,8 +34,8 @@ data "aws_subnets" "all_subnets" {
 }
 
 resource "aws_subnet" "my_subnet" {
-  count                  = length(data.aws_subnets.all_subnets.ids) == 0 ? 1 : 0
-  vpc_id                 = length(data.aws_vpcs.all_vpcs.ids) > 0 ? data.aws_vpcs.all_vpcs.ids[0] : aws_vpc.my_vpc[0].id
+  count                  = length(data.aws_subnets.all_subnets) == 0 ? 1 : 0
+  vpc_id                 = length(data.aws_vpcs.all_vpcs) > 0 ? data.aws_vpcs.all_vpcs[0].id : aws_vpc.my_vpc[0].id
   cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
@@ -57,8 +57,8 @@ data "aws_internet_gateway" "all_igws" {
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = length(data.aws_internet_gateway.all_igws.id) == 0 ? 1 : 0
-  vpc_id = length(data.aws_vpcs.all_vpcs.ids) > 0 ? data.aws_vpcs.all_vpcs.ids[0] : aws_vpc.my_vpc[0].id
+  count  = length(data.aws_internet_gateway.all_igws == 0 ? 1 : 0
+  vpc_id = length(data.aws_vpcs.all_vpcs > 0 ? data.aws_vpcs.all_vpcs[0].id : aws_vpc.my_vpc[0].id
 
   tags = {
     Name = "MyInternetGateway"
@@ -78,12 +78,12 @@ data "aws_route_tables" "all_route_tables" {
 }
 
 resource "aws_route_table" "my_route_table" {
-  count  = length(data.aws_route_tables.all_route_tables.ids) == 0 ? 1 : 0
-  vpc_id = length(data.aws_vpcs.all_vpcs.ids) > 0 ? data.aws_vpcs.all_vpcs.ids[0] : aws_vpc.my_vpc[0].id
+  count  = length(data.aws_route_tables.all_route_tables) == 0 ? 1 : 0
+  vpc_id = length(data.aws_vpcs.all_vpcs) > 0 ? data.aws_vpcs.all_vpcs[0].id : aws_vpc.my_vpc[0].id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = length(data.aws_internet_gateway.all_igws.ids) > 0 ? data.aws_internet_gateway.all_igws.ids[0] : aws_internet_gateway.my_igw[0].id
+    gateway_id = length(data.aws_internet_gateway.all_igws) > 0 ? data.aws_internet_gateway.all_igws[0].id : aws_internet_gateway.my_igw[0].id
   }
 
   tags = {
@@ -97,9 +97,9 @@ resource "aws_route_table" "my_route_table" {
 
 # Step 5: Associate the Route Table with the Subnet if Necessary
 resource "aws_route_table_association" "my_route_table_association" {
-  count          = length(data.aws_route_tables.all_route_tables.ids) == 0 ? 1 : 0
-  subnet_id      = length(data.aws_subnets.all_subnets.ids) > 0 ? data.aws_subnets.all_subnets.ids[0] : aws_subnet.my_subnet[0].id
-  route_table_id = length(data.aws_route_tables.all_route_tables.ids) > 0 ? data.aws_route_tables.all_route_tables.ids[0] : aws_route_table.my_route_table[0].id
+  count          = length(data.aws_route_tables.all_route_tables) == 0 ? 1 : 0
+  subnet_id      = length(data.aws_subnets.all_subnets) > 0 ? data.aws_subnets.all_subnets[0].id : aws_subnet.my_subnet[0].id
+  route_table_id = length(data.aws_route_tables.all_route_tables) > 0 ? data.aws_route_tables.all_route_tables[0].id : aws_route_table.my_route_table[0].id
 }
 
 # Step 6: Check for Existing Security Group and Create if it Doesn't Exist
@@ -111,10 +111,10 @@ data "aws_security_groups" "all_sgs" {
 }
 
 resource "aws_security_group" "my_security_group" {
-  count  = length(data.aws_security_groups.all_sgs.ids) == 0 ? 1 : 0
+  count  = length(data.aws_security_groups.all_sgs) == 0 ? 1 : 0
   name        = "allow_rdp"
   description = "Allow RDP traffic"
-  vpc_id      = length(data.aws_vpcs.all_vpcs.ids) > 0 ? data.aws_vpcs.all_vpcs.ids[0] : aws_vpc.my_vpc[0].id
+  vpc_id      = length(data.aws_vpcs.all_vpcs) > 0 ? data.aws_vpcs.all_vpcs[0].id : aws_vpc.my_vpc[0].id
 
   ingress {
     from_port   = 3389
@@ -162,8 +162,8 @@ resource "aws_key_pair" "my_key_pair" {
 resource "aws_instance" "my_windows_instance" {
   ami                    = "ami-0069eac59d05ae12b" # Change to a valid Windows AMI in your region
   instance_type          = "t2.micro"
-  subnet_id              = length(data.aws_subnets.all_subnets.ids) > 0 ? data.aws_subnets.all_subnets.ids[0] : aws_subnet.my_subnet[0].id
-  vpc_security_group_ids = [length(data.aws_security_groups.all_sgs.ids) > 0 ? data.aws_security_groups.all_sgs.ids[0] : aws_security_group.my_security_group[0].id]
+  subnet_id              = length(data.aws_subnets.all_subnets) > 0 ? data.aws_subnets.all_subnets[0].id : aws_subnet.my_subnet[0].id
+  vpc_security_group_ids = [length(data.aws_security_groups.all_sgs) > 0 ? data.aws_security_groups.all_sgs[0].id : aws_security_group.my_security_group[0].id]
   key_name               = aws_key_pair.my_key_pair.key_name
 
   user_data = <<-EOF
