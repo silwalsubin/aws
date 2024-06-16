@@ -1,10 +1,8 @@
-# File: main.tf
-
 provider "aws" {
   region = "us-east-1" # Specify your preferred region
 }
 
-# Step 1: Check for Existing VPCs with the Specified Name Tag
+# Check for Existing VPCs with the Specified Name Tag
 data "aws_vpcs" "existing" {
   filter {
     name   = "tag:Name"
@@ -28,7 +26,7 @@ resource "aws_vpc" "my_vpc" {
   }
 }
 
-# Step 2: Check for Existing Subnet and Create if it Doesn't Exist
+# Check for Existing Subnet and Create if it Doesn't Exist
 data "aws_subnets" "existing" {
   filter {
     name   = "tag:Name"
@@ -51,7 +49,28 @@ resource "aws_subnet" "my_subnet" {
   }
 }
 
-data "aws_vpc" "existing_vpc_details" {
+# Check for Existing Internet Gateway and Create if it Doesn't Exist
+data "aws_internet_gateways" "existing" {
+  filter {
+    name   = "tag:Name"
+    values = ["MyInternetGateway"]  # Replace with your Internet Gateway name
+  }
+}
+
+resource "aws_internet_gateway" "my_igw" {
+  count  = length(data.aws_internet_gateways.existing.ids) == 0 ? 1 : 0
+  vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
+
+  tags = {
+    Name = "MyInternetGateway"
+  }
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+data "aws_vpcs" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
 }
