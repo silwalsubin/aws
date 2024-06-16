@@ -157,7 +157,7 @@ data "aws_key_pair" "existing" {
 }
 
 resource "aws_key_pair" "my_key_pair" {
-  count  = length(data.aws_key_pair.existing.ids) == 0 ? 1 : 0
+  count  = length(data.aws_key_pair.existing.id) == 0 ? 1 : 0
   key_name   = "my_key_pair"
   public_key = tls_private_key.my_key.public_key_openssh
 
