@@ -36,7 +36,7 @@ data "aws_subnet" "existing_subnet" {
 }
 
 resource "aws_subnet" "my_subnet" {
-  count                  = length(data.aws_subnet.existing_subnet.ids) == 0 ? 1 : 0
+  count                  = length(data.aws_subnet.existing_subnet.id) == 0 ? 1 : 0
   vpc_id                 = coalesce(data.aws_vpc.existing_vpc.id, aws_vpc.my_vpc[0].id)
   cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
@@ -59,7 +59,7 @@ data "aws_internet_gateway" "existing_igw" {
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = length(data.aws_internet_gateway.existing_igw.ids) == 0 ? 1 : 0
+  count  = length(data.aws_internet_gateway.existing_igw.id) == 0 ? 1 : 0
   vpc_id = coalesce(data.aws_vpc.existing_vpc.id, aws_vpc.my_vpc[0].id)
 
   tags = {
@@ -80,7 +80,7 @@ data "aws_route_table" "existing_route_table" {
 }
 
 resource "aws_route_table" "my_route_table" {
-  count  = length(data.aws_route_table.existing_route_table.ids) == 0 ? 1 : 0
+  count  = length(data.aws_route_table.existing_route_table.id) == 0 ? 1 : 0
   vpc_id = coalesce(data.aws_vpc.existing_vpc.id, aws_vpc.my_vpc[0].id)
 
   route {
@@ -99,7 +99,7 @@ resource "aws_route_table" "my_route_table" {
 
 # Step 5: Associate the Route Table with the Subnet if Necessary
 resource "aws_route_table_association" "my_route_table_association" {
-  count          = length(data.aws_route_table.existing_route_table.ids) == 0 ? 1 : 0
+  count          = length(data.aws_route_table.existing_route_table.id) == 0 ? 1 : 0
   subnet_id      = coalesce(data.aws_subnet.existing_subnet.id, aws_subnet.my_subnet[0].id)
   route_table_id = coalesce(data.aws_route_table.existing_route_table.id, aws_route_table.my_route_table[0].id)
 }
@@ -113,7 +113,7 @@ data "aws_security_group" "existing_sg" {
 }
 
 resource "aws_security_group" "my_security_group" {
-  count  = length(data.aws_security_group.existing_sg.ids) == 0 ? 1 : 0
+  count  = length(data.aws_security_group.existing_sg.id) == 0 ? 1 : 0
   name        = "allow_rdp"
   description = "Allow RDP traffic"
   vpc_id      = coalesce(data.aws_vpc.existing_vpc.id, aws_vpc.my_vpc[0].id)
