@@ -57,7 +57,7 @@ data "aws_internet_gateway" "all_igws" {
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = length(data.aws_internet_gateway.all_igws == 0 ? 1 : 0
+  count  = length(data.aws_internet_gateway.all_igws == 0) ? 1 : 0
   vpc_id = length(data.aws_vpcs.all_vpcs > 0 ? data.aws_vpcs.all_vpcs[0].id : aws_vpc.my_vpc[0].id
 
   tags = {
