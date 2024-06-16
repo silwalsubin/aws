@@ -49,7 +49,7 @@ resource "aws_subnet" "my_subnet" {
   }
 }
 
-data "aws_internet_gateways" "all_igws" {
+data "aws_internet_gateway" "all_igws" {
   # No filter needed, we will filter manually
 }
 
