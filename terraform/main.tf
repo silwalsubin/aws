@@ -37,7 +37,7 @@ data "aws_subnet" "existing_subnet" {
 
 resource "aws_subnet" "my_subnet" {
   count                  = length(data.aws_subnet.existing_subnet.id) == 0 ? 1 : 0
-  vpc_id                 = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id[0] : aws_vpc.my_vpc[0].id
+  vpc_id                 = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id : aws_vpc.my_vpc[0].id
   cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
@@ -60,7 +60,7 @@ data "aws_internet_gateway" "existing_igw" {
 
 resource "aws_internet_gateway" "my_igw" {
   count  = length(data.aws_internet_gateway.existing_igw.id) == 0 ? 1 : 0
-  vpc_id = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id[0] : aws_vpc.my_vpc[0].id
+  vpc_id = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id : aws_vpc.my_vpc[0].id
 
   tags = {
     Name = "MyInternetGateway"
@@ -81,11 +81,11 @@ data "aws_route_table" "existing_route_table" {
 
 resource "aws_route_table" "my_route_table" {
   count  = length(data.aws_route_table.existing_route_table.ids) == 0 ? 1 : 0
-  vpc_id = length(data.aws_vpc.existing_vpc.ids) > 0 ? data.aws_vpc.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  vpc_id = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id : aws_vpc.my_vpc[0].id
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = length(data.aws_internet_gateway.existing_igw.ids) > 0 ? data.aws_internet_gateway.existing_igw.ids[0] : aws_internet_gateway.my_igw[0].id
+    gateway_id = length(data.aws_internet_gateway.existing_igw.ids) > 0 ? data.aws_internet_gateway.existing_igw.id : aws_internet_gateway.my_igw[0].id
   }
 
   tags = {
@@ -100,8 +100,8 @@ resource "aws_route_table" "my_route_table" {
 # Step 5: Associate the Route Table with the Subnet if Necessary
 resource "aws_route_table_association" "my_route_table_association" {
   count          = length(data.aws_route_table.existing_route_table.ids) == 0 ? 1 : 0
-  subnet_id      = length(data.aws_subnet.existing_subnet.ids) > 0 ? data.aws_subnet.existing_subnet.ids[0] : aws_subnet.my_subnet[0].id
-  route_table_id = length(data.aws_route_table.existing_route_table.ids) > 0 ? data.aws_route_table.existing_route_table.ids[0] : aws_route_table.my_route_table[0].id
+  subnet_id      = length(data.aws_subnet.existing_subnet.ids) > 0 ? data.aws_subnet.existing_subnet.id : aws_subnet.my_subnet[0].id
+  route_table_id = length(data.aws_route_table.existing_route_table.ids) > 0 ? data.aws_route_table.existing_route_table.id : aws_route_table.my_route_table[0].id
 }
 
 # Step 6: Check for Existing Security Group and Create if it Doesn't Exist
@@ -116,7 +116,7 @@ resource "aws_security_group" "my_security_group" {
   count  = length(data.aws_security_group.existing_sg.id) == 0 ? 1 : 0
   name        = "allow_rdp"
   description = "Allow RDP traffic"
-  vpc_id      = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id[0] : aws_vpc.my_vpc[0].id
+  vpc_id      = length(data.aws_vpc.existing_vpc.id) > 0 ? data.aws_vpc.existing_vpc.id : aws_vpc.my_vpc[0].id
 
   ingress {
     from_port   = 3389
@@ -164,8 +164,8 @@ resource "aws_key_pair" "my_key_pair" {
 resource "aws_instance" "my_windows_instance" {
   ami                    = "ami-0069eac59d05ae12b" # Change to a valid Windows AMI in your region
   instance_type          = "t2.micro"
-  subnet_id              = length(data.aws_subnet.existing_subnet.ids) > 0 ? data.aws_subnet.existing_subnet.ids[0] : aws_subnet.my_subnet[0].id
-  vpc_security_group_ids = [length(data.aws_security_group.existing_sg.ids) > 0 ? data.aws_security_group.existing_sg.ids[0] : aws_security_group.my_security_group[0].id]
+  subnet_id              = length(data.aws_subnet.existing_subnet.ids) > 0 ? data.aws_subnet.existing_subnet.id: aws_subnet.my_subnet[0].id
+  vpc_security_group_ids = [length(data.aws_security_group.existing_sg.ids) > 0 ? data.aws_security_group.existing_sg.id : aws_security_group.my_security_group[0].id]
   key_name               = aws_key_pair.my_key_pair.key_name
 
   user_data = <<-EOF
