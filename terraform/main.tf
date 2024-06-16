@@ -49,24 +49,16 @@ resource "aws_subnet" "my_subnet" {
   }
 }
 
-data "aws_internet_gateway" "all_igws" {
-  # No filter needed, we will filter manually
-}
-
-# Create a map of Internet Gateways attached to our target VPC
-locals {
-  target_vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
-  attached_igw = {
-    for igw in data.aws_internet_gateway.all_igws : igw => igw
-    if length([
-      for attachment in data.aws_internet_gateway.all_igws.attachments : attachment.vpc_id
-      if attachment.vpc_id == local.target_vpc_id
-    ]) > 0
+data "aws_internet_gateway" "attached_igw" {
+  count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
+  filter {
+    name   = "attachment.vpc-id"
+    values = length(data.aws_vpcs.existing.ids) > 0 ? [data.aws_vpcs.existing.ids[0]] : []
   }
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = length(local.attached_igw) == 0 ? 1 : 0
+  count  = length(data.aws_internet_gateway.attached_igw) == 0 ? 1 : 0
   vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
 
   tags = {
