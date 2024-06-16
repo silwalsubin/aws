@@ -28,7 +28,29 @@ resource "aws_vpc" "my_vpc" {
   }
 }
 
-# Step 2: If a VPC with the specified name exists, fetch its details
+# Step 2: Check for Existing Subnet and Create if it Doesn't Exist
+data "aws_subnet" "existing" {
+  filter {
+    name   = "tag:Name"
+    values = ["MySubnet"]  # Replace with your Subnet name
+  }
+}
+
+resource "aws_subnet" "my_subnet" {
+  count                  = length(data.aws_subnet.existing.ids) == 0 ? 1 : 0
+  vpc_id                 = length(data.aws_vpc.existing.ids) > 0 ? data.aws_vpc.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  cidr_block             = "10.0.1.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "MySubnet"
+  }
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
 data "aws_vpc" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
