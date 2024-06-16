@@ -80,7 +80,7 @@ data "aws_route_tables" "existing" {
 
 resource "aws_route_table" "my_route_table" {
   count  = length(data.aws_route_tables.existing.ids) == 0 ? 1 : 0
-  vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids : aws_vpc.my_vpc[0].id
+  vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
 
   route {
     cidr_block = "0.0.0.0/0"
