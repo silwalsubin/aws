@@ -54,7 +54,7 @@ data "aws_internet_gateway" "existing" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   filter {
     name   = "tag:Name"
-    values = ["MyInternetGateway"]  # Replace with your Internet Gateway name
+    values = [data.aws_vpcs.existing.ids[0]]
   }
 }
 
