@@ -58,7 +58,7 @@ data "aws_internet_gateway" "existing" {
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = length(data.aws_internet_gateway.existing.id) == 0 ? 1 : 0
+  count  = data.aws_internet_gateway.existing == null ? 1 : 0
   vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
 
   tags = {
