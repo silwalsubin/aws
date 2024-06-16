@@ -83,7 +83,7 @@ resource "aws_route_table" "my_route_table" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = length(data.aws_internet_gateway.all_igws.id) > 0 ? data.aws_internet_gateway.all_igws.id[0] : aws_internet_gateway.my_igw[0].id
+    gateway_id = length(data.aws_internet_gateway.all_igws.ids) > 0 ? data.aws_internet_gateway.all_igws.ids[0] : aws_internet_gateway.my_igw[0].id
   }
 
   tags = {
