@@ -148,17 +148,7 @@ resource "tls_private_key" "my_key" {
   }
 }
 
-# Check for Existing Key Pair
-data "aws_key_pair" "existing" {
-  key_name = "my_key_pair"
-}
-
-locals {
-  key_pair_exists = try(data.aws_key_pair.existing.key_name != "", false)
-}
-
 resource "aws_key_pair" "my_key_pair" {
-  count  = local.key_pair_exists ? 0 : 1
   key_name   = "my_key_pair"
   public_key = tls_private_key.my_key.public_key_openssh
 
