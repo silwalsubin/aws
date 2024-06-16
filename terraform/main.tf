@@ -14,6 +14,10 @@ resource "aws_vpc" "my_vpc" {
   tags = {
     Name = "MyVPC"
   }
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 # Step 3: Create a Subnet
@@ -25,6 +29,10 @@ resource "aws_subnet" "my_subnet" {
   tags = {
     Name = "MySubnet"
   }
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 # Step 4: Create an Internet Gateway
@@ -33,6 +41,10 @@ resource "aws_internet_gateway" "my_igw" {
 
   tags = {
     Name = "MyInternetGateway"
+  }
+
+  lifecycle {
+    prevent_destroy = false
   }
 }
 
@@ -47,6 +59,10 @@ resource "aws_route_table" "my_route_table" {
 
   tags = {
     Name = "MyRouteTable"
+  }
+
+  lifecycle {
+    prevent_destroy = false
   }
 }
 
@@ -79,17 +95,29 @@ resource "aws_security_group" "my_security_group" {
   tags = {
     Name = "MySecurityGroup"
   }
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 # Step 8: Create a Key Pair
 resource "tls_private_key" "my_key" {
   algorithm = "RSA"
   rsa_bits  = 2048
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 resource "aws_key_pair" "my_key_pair" {
   key_name   = "my_key_pair"
   public_key = tls_private_key.my_key.public_key_openssh
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 # Step 9: Create a Windows EC2 Instance
@@ -110,6 +138,10 @@ resource "aws_instance" "my_windows_instance" {
     Name = "DevNibus"
     Environment = var.environment  # Adding the environment tag
   }
+
+  lifecycle {
+    prevent_destroy = false
+  }
 }
 
 # Output the instance public IP and key private key
@@ -129,5 +161,9 @@ resource "aws_eip" "my_eip" {
 
   tags = {
     Name = "MyElasticIP"
+  }
+
+  lifecycle {
+    prevent_destroy = false
   }
 }
