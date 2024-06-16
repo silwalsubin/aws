@@ -4,7 +4,7 @@ provider "aws" {
   region = "us-east-1" # Specify your preferred region
 }
 
-# Data source to check if a VPC with a specific name tag already exists
+# Step 1: Check for Existing VPCs with the Specified Name Tag
 data "aws_vpcs" "existing" {
   filter {
     name   = "tag:Name"
@@ -12,7 +12,7 @@ data "aws_vpcs" "existing" {
   }
 }
 
-# Resource block to create a new VPC only if it does not exist
+# Conditionally create a new VPC if none with the specified name tag exists
 resource "aws_vpc" "my_vpc" {
   count                = length(data.aws_vpcs.existing.ids) == 0 ? 1 : 0
   cidr_block           = "10.0.0.0/16"
@@ -28,11 +28,21 @@ resource "aws_vpc" "my_vpc" {
   }
 }
 
+# Step 2: If a VPC with the specified name exists, fetch its details
+data "aws_vpc" "existing_vpc_details" {
+  count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
+  id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
+}
+
 # Outputs to display the details of the VPC
 output "vpc_id" {
   value = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
 }
 
 output "vpc_cidr_block" {
-  value = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.cidr_blocks[0] : aws_vpc.my_vpc[0].cidr_block
+  value = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpc.existing_vpc_details[0].cidr_block : aws_vpc.my_vpc[0].cidr_block
+}
+
+output "vpc_status" {
+  value = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpc.existing_vpc_details[0].state : "newly created"
 }
