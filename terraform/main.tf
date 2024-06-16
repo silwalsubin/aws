@@ -49,7 +49,7 @@ resource "aws_subnet" "my_subnet" {
 }
 
 # Step 3: Check for Existing Internet Gateway and Create if it Doesn't Exist
-data "aws_internet_gateways" "all_igws" {
+data "aws_internet_gateway" "all_igws" {
   filter {
     name   = "tag:Name"
     values = ["MyInternetGateway"]  # Replace with your Internet Gateway name
