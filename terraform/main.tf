@@ -70,7 +70,7 @@ resource "aws_internet_gateway" "my_igw" {
   }
 }
 
-data "aws_vpcs" "existing_vpc_details" {
+data "aws_vpc" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
 }
