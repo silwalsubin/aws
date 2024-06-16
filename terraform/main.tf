@@ -2,7 +2,7 @@
 
 # Step 1: Define the provider
 provider "aws" {
-  region = "us-west-2" # Specify your preferred region
+  region = "us-east-1" # Specify your preferred region
 }
 
 # Step 2: Create a VPC
@@ -94,7 +94,7 @@ resource "aws_key_pair" "my_key_pair" {
 
 # Step 9: Create a Windows EC2 Instance
 resource "aws_instance" "my_windows_instance" {
-  ami                    = "ami-0d5d9d301c853a04a" # Change to a valid Windows AMI in your region
+  ami                    = "ami-0069eac59d05ae12b" # Change to a valid Windows AMI in your region
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.my_subnet.id
   vpc_security_group_ids = [aws_security_group.my_security_group.id]
