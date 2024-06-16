@@ -108,6 +108,7 @@ resource "aws_instance" "my_windows_instance" {
 
   tags = {
     Name = "MyWindowsInstance"
+    Environment = var.environment  # Adding the environment tag
   }
 }
 
