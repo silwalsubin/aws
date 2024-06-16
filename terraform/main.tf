@@ -102,6 +102,43 @@ resource "aws_route_table_association" "my_route_table_association" {
   route_table_id = length(data.aws_route_tables.existing.id) > 0 ? data.aws_route_tables.existing.id : aws_route_table.my_route_table[0].id
 }
 
+# Check for Existing Security Group and Create if it Doesn't Exist
+data "aws_security_groups" "existing" {
+  filter {
+    name   = "tag:Name"
+    values = ["MySecurityGroup"]  # Replace with your Security Group name
+  }
+}
+
+resource "aws_security_group" "my_security_group" {
+  count  = length(data.aws_security_groups.existing.id) == 0 ? 1 : 0
+  name        = "allow_rdp"
+  description = "Allow RDP traffic"
+  vpc_id      = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
+
+  ingress {
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "MySecurityGroup"
+  }
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
 data "aws_vpc" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
