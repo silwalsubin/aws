@@ -139,6 +139,24 @@ resource "aws_security_group" "my_security_group" {
   }
 }
 
+resource "tls_private_key" "my_key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+resource "aws_key_pair" "my_key_pair" {
+  key_name   = "my_key_pair"
+  public_key = tls_private_key.my_key.public_key_openssh
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
 data "aws_vpc" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
