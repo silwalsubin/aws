@@ -96,6 +96,12 @@ resource "aws_route_table" "my_route_table" {
   }
 }
 
+resource "aws_route_table_association" "my_route_table_association" {
+  count          = length(data.aws_route_tables.existing.id) == 0 ? 1 : 0
+  subnet_id      = length(data.aws_subnets.existing.id) > 0 ? data.aws_subnets.existing.id : aws_subnet.my_subnet[0].id
+  route_table_id = length(data.aws_route_tables.existing.id) > 0 ? data.aws_route_tables.existing.id : aws_route_table.my_route_table[0].id
+}
+
 data "aws_vpc" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
