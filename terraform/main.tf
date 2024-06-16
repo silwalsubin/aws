@@ -71,7 +71,7 @@ resource "aws_internet_gateway" "my_igw" {
 }
 
 # Check for Existing Route Table and Create if it Doesn't Exist
-data "aws_route_table" "existing" {
+data "aws_route_tables" "existing" {
   filter {
     name   = "tag:Name"
     values = ["MyRouteTable"]  # Replace with your Route Table name
