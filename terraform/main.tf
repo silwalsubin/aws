@@ -153,8 +153,12 @@ data "aws_key_pair" "existing" {
   key_name = "my_key_pair"
 }
 
+locals {
+  key_pair_exists = try(data.aws_key_pair.existing.key_name != "", false)
+}
+
 resource "aws_key_pair" "my_key_pair" {
-  count  = length(data.aws_key_pair.existing.key_name) == 0 ? 1 : 0
+  count  = local.key_pair_exists ? 0 : 1
   key_name   = "my_key_pair"
   public_key = tls_private_key.my_key.public_key_openssh
 
