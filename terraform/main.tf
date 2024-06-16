@@ -148,8 +148,8 @@ resource "tls_private_key" "my_key" {
   }
 }
 
-data "aws_key_pairs" "all" {
-  
+data "aws_key_pair" "all" {
+
 }
 
 resource "aws_key_pair" "my_key_pair" {
