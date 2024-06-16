@@ -53,7 +53,7 @@ resource "aws_subnet" "my_subnet" {
 data "aws_internet_gateway" "existing" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   filter {
-    name   = "tag:Name"
+    name   = "attachment.vpc-id"
     values = [data.aws_vpcs.existing.ids[0]]
   }
 }
