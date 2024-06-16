@@ -51,11 +51,11 @@ resource "aws_subnet" "my_subnet" {
 
 # Check for Existing Internet Gateway and Create if it Doesn't Exist
 data "aws_internet_gateway" "existing" {
+  count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   filter {
     name   = "tag:Name"
     values = ["MyInternetGateway"]  # Replace with your Internet Gateway name
   }
-  depends_on = [data.aws_vpcs.existing]  # Ensure this runs after VPC check
 }
 
 resource "aws_internet_gateway" "my_igw" {
