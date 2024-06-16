@@ -153,7 +153,7 @@ data "aws_key_pair" "all" {
 }
 
 locals {
-  key_pair_exists = contains(data.aws_key_pair.all.key_names, "my_key_pair")
+  key_pair_exists = contains(data.aws_key_pair.all.key_name, "my_key_pair")
 }
 
 resource "aws_key_pair" "my_key_pair" {
