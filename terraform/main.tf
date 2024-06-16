@@ -51,7 +51,6 @@ resource "aws_subnet" "my_subnet" {
 
 # Check for Existing Internet Gateway and Create if it Doesn't Exist
 data "aws_internet_gateway" "existing" {
-  count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   filter {
     name   = "attachment.vpc-id"
     values = [data.aws_vpcs.existing.ids[0]]
