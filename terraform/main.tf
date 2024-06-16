@@ -85,7 +85,7 @@ resource "aws_route_table" "my_route_table" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = length(data.aws_internet_gateway.existing_igw.ids) > 0 ? data.aws_internet_gateway.existing_igw.id : aws_internet_gateway.my_igw[0].id
+    gateway_id = length(data.aws_internet_gateway.existing_igw.id) > 0 ? data.aws_internet_gateway.existing_igw.id : aws_internet_gateway.my_igw[0].id
   }
 
   tags = {
@@ -164,8 +164,8 @@ resource "aws_key_pair" "my_key_pair" {
 resource "aws_instance" "my_windows_instance" {
   ami                    = "ami-0069eac59d05ae12b" # Change to a valid Windows AMI in your region
   instance_type          = "t2.micro"
-  subnet_id              = length(data.aws_subnet.existing_subnet.ids) > 0 ? data.aws_subnet.existing_subnet.id: aws_subnet.my_subnet[0].id
-  vpc_security_group_ids = [length(data.aws_security_group.existing_sg.ids) > 0 ? data.aws_security_group.existing_sg.id : aws_security_group.my_security_group[0].id]
+  subnet_id              = length(data.aws_subnet.existing_subnet.id) > 0 ? data.aws_subnet.existing_subnet.id: aws_subnet.my_subnet[0].id
+  vpc_security_group_ids = [length(data.aws_security_group.existing_sg.id) > 0 ? data.aws_security_group.existing_sg.id : aws_security_group.my_security_group[0].id]
   key_name               = aws_key_pair.my_key_pair.key_name
 
   user_data = <<-EOF
