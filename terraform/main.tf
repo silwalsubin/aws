@@ -49,17 +49,24 @@ resource "aws_subnet" "my_subnet" {
   }
 }
 
-# Check for Existing Internet Gateway and Create if it Doesn't Exist
-data "aws_internet_gateway" "existing" {
-  count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
-  filter {
-    name   = "attachment.vpc-id"
-    values = [data.aws_vpcs.existing.ids[0]]
+data "aws_internet_gateways" "all_igws" {
+  # No filter needed, we will filter manually
+}
+
+# Create a map of Internet Gateways attached to our target VPC
+locals {
+  target_vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
+  attached_igw = {
+    for igw in data.aws_internet_gateways.all_igws.ids : igw => igw
+    if length([
+      for attachment in data.aws_internet_gateways.all_igws.attachments : attachment.vpc_id
+      if attachment.vpc_id == local.target_vpc_id
+    ]) > 0
   }
 }
 
 resource "aws_internet_gateway" "my_igw" {
-  count  = data.aws_internet_gateway.existing == null ? 1 : 0
+  count  = length(local.attached_igw) == 0 ? 1 : 0
   vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
 
   tags = {
