@@ -1,0 +1,45 @@
+# File: .github/workflows/terraform-on-demand.yml
+
+name: Terraform On-Demand
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'The environment to deploy to (e.g., dev, staging, prod)'
+        required: true
+        default: 'dev'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0  # Specify the Terraform version you want to use
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2  # Specify your AWS region
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan -var="environment=${{ github.event.inputs.environment }}"
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -var="environment=${{ github.event.inputs.environment }}"
+      if: github.event.inputs.environment != 'production'  # Apply automatically if not production
+
+    - name: Approval Required for Production
+      if: github.event.inputs.environment == 'production'
+      run: echo "Manual approval required for production. Please review the plan and apply manually."
