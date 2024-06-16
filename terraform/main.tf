@@ -57,7 +57,7 @@ data "aws_internet_gateway" "all_igws" {
 locals {
   target_vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
   attached_igw = {
-    for igw in data.aws_internet_gateway.all_igws.ids : igw => igw
+    for igw in data.aws_internet_gateway.all_igws : igw => igw
     if length([
       for attachment in data.aws_internet_gateway.all_igws.attachments : attachment.vpc_id
       if attachment.vpc_id == local.target_vpc_id
