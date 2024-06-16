@@ -70,6 +70,32 @@ resource "aws_internet_gateway" "my_igw" {
   }
 }
 
+# Check for Existing Route Table and Create if it Doesn't Exist
+data "aws_route_table" "existing" {
+  filter {
+    name   = "tag:Name"
+    values = ["MyRouteTable"]  # Replace with your Route Table name
+  }
+}
+
+resource "aws_route_table" "my_route_table" {
+  count  = length(data.aws_route_table.existing.ids) == 0 ? 1 : 0
+  vpc_id = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids : aws_vpc.my_vpc[0].id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = length(data.aws_internet_gateway.attached_igw) > 0 ? data.aws_internet_gateway.attached_igw.id : aws_internet_gateway.my_igw[0].id
+  }
+
+  tags = {
+    Name = "MyRouteTable"
+  }
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
 data "aws_vpc" "existing_vpc_details" {
   count = length(data.aws_vpcs.existing.ids) > 0 ? 1 : 0
   id    = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : null
