@@ -38,7 +38,7 @@ data "aws_subnets" "existing" {
 
 resource "aws_subnet" "my_subnet" {
   count                  = length(data.aws_subnets.existing.ids) == 0 ? 1 : 0
-  vpc_id                 = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  vpc_id                 = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
   cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
