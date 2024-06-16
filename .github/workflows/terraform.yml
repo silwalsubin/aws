@@ -31,12 +31,15 @@ jobs:
         aws-region: us-west-2  # Specify your AWS region
 
     - name: Terraform Init
+      working-directory: ./terraform
       run: terraform init
 
-    - name: Terraform Plan
+    - name: Terraform 
+      working-directory: ./terraform
       run: terraform plan -var="environment=${{ github.event.inputs.environment }}"
 
     - name: Terraform Apply
+      working-directory: ./terraform
       run: terraform apply -auto-approve -var="environment=${{ github.event.inputs.environment }}"
       if: github.event.inputs.environment != 'production'  # Apply automatically if not production
 
