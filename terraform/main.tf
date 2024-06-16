@@ -29,7 +29,7 @@ resource "aws_vpc" "my_vpc" {
 }
 
 # Step 2: Check for Existing Subnet and Create if it Doesn't Exist
-data "aws_subnet" "existing" {
+data "aws_subnets" "existing" {
   filter {
     name   = "tag:Name"
     values = ["MySubnet"]  # Replace with your Subnet name
@@ -37,8 +37,8 @@ data "aws_subnet" "existing" {
 }
 
 resource "aws_subnet" "my_subnet" {
-  count                  = length(data.aws_subnet.existing.ids) == 0 ? 1 : 0
-  vpc_id                 = length(data.aws_vpc.existing.ids) > 0 ? data.aws_vpc.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
+  count                  = length(data.aws_subnets.existing.ids) == 0 ? 1 : 0
+  vpc_id                 = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing_vpc.ids[0] : aws_vpc.my_vpc[0].id
   cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
 
