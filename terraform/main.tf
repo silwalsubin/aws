@@ -107,7 +107,7 @@ resource "aws_instance" "my_windows_instance" {
   EOF
 
   tags = {
-    Name = "MyWindowsInstance"
+    Name = "DevNibus"
     Environment = var.environment  # Adding the environment tag
   }
 }
