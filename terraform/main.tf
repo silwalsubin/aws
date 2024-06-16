@@ -111,7 +111,7 @@ data "aws_security_groups" "existing" {
 }
 
 resource "aws_security_group" "my_security_group" {
-  count  = length(data.aws_security_groups.existing.id) == 0 ? 1 : 0
+  count  = length(data.aws_security_groups.existing.ids) == 0 ? 1 : 0
   name        = "allow_rdp"
   description = "Allow RDP traffic"
   vpc_id      = length(data.aws_vpcs.existing.ids) > 0 ? data.aws_vpcs.existing.ids[0] : aws_vpc.my_vpc[0].id
