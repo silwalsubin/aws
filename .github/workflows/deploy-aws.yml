@@ -25,14 +25,14 @@ jobs:
           aws-region: us-east-1
 
       - name: Initialize Terraform
-        run: terraform init
-
+        run: cd terraform && terraform init
+  
       - name: Plan Terraform
-        run: terraform plan
-
+        run: cd terraform && terraform plan
+  
       - name: Apply Terraform
-        run: terraform apply -auto-approve
-
+        run: cd terraform && terraform apply -auto-approve
+  
       - name: Output VPC and Subnet Details
         run: |
           echo "VPC ID: $(terraform output vpc_id)"
