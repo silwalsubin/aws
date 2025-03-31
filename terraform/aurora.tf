@@ -15,7 +15,7 @@ resource "aws_subnet" "subnet_b" {
 }
 
 resource "aws_db_subnet_group" "aurora_subnet_group" {
-  name       = "aurora-subnet-group"
+  name       = "new-aurora-subnet-group"
   subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id]
 }
 
