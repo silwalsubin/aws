@@ -24,6 +24,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Clean up Terraform cache
+        run: |
+          rm -rf .terraform
+          rm -f terraform.tfstate*
+          rm -f .terraform.lock.hcl
+
       - name: Initialize Terraform
         run: cd terraform && terraform init
   
