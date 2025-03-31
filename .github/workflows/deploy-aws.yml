@@ -1,12 +1,7 @@
 name: Deploy AWS Lambda with Terraform
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
   terraform:
