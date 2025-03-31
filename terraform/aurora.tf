@@ -35,7 +35,7 @@ resource "aws_rds_cluster" "aurora" {
   engine                 = "aurora-postgresql"
   engine_version         = "13.16"
   database_name          = "mydatabase"
-  master_username        = "admin"
+  master_username        = "mydbadmin"
   master_password        = "your-secure-password"
   skip_final_snapshot    = true
   backup_retention_period = 7
